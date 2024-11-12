@@ -29,12 +29,7 @@ class _MyAppState extends State<MyApp> {
 
   void setUpLogs() async {
     await FlutterLogs.initLogs(
-        logLevelsEnabled: [
-          LogLevel.INFO,
-          LogLevel.WARNING,
-          LogLevel.ERROR,
-          LogLevel.SEVERE
-        ],
+        logLevelsEnabled: [LogLevel.INFO, LogLevel.WARNING, LogLevel.ERROR, LogLevel.SEVERE],
         timeStampFormat: TimeStampFormat.TIME_FORMAT_READABLE,
         directoryStructure: DirectoryStructure.FOR_DATE,
         logTypesEnabled: [_myLogFileName],
@@ -52,20 +47,16 @@ class _MyAppState extends State<MyApp> {
     FlutterLogs.channel.setMethodCallHandler((call) async {
       if (call.method == 'logsExported') {
         // Contains file name of zip
-        FlutterLogs.logInfo(
-            _tag, "setUpLogs", "logsExported: ${call.arguments.toString()}");
+        FlutterLogs.logInfo(_tag, "setUpLogs", "logsExported: ${call.arguments.toString()}");
 
-        setLogsStatus(
-            status: "logsExported: ${call.arguments.toString()}", append: true);
+        setLogsStatus(status: "logsExported: ${call.arguments.toString()}", append: true);
 
         // Notify Future with value
         _completer.complete(call.arguments.toString());
       } else if (call.method == 'logsPrinted') {
-        FlutterLogs.logInfo(
-            _tag, "setUpLogs", "logsPrinted: ${call.arguments.toString()}");
+        FlutterLogs.logInfo(_tag, "setUpLogs", "logsPrinted: ${call.arguments.toString()}");
 
-        setLogsStatus(
-            status: "logsPrinted: ${call.arguments.toString()}", append: true);
+        setLogsStatus(status: "logsPrinted: ${call.arguments.toString()}", append: true);
       }
     });
   }
@@ -123,49 +114,39 @@ class _MyAppState extends State<MyApp> {
                       Directory? externalDirectory;
 
                       if (Platform.isIOS) {
-                        externalDirectory =
-                            await getApplicationDocumentsDirectory();
+                        externalDirectory = await getApplicationDocumentsDirectory();
                       } else {
                         externalDirectory = await getExternalStorageDirectory();
                       }
 
-                      FlutterLogs.logInfo(
-                          _tag, "found", 'External Storage:$externalDirectory');
+                      FlutterLogs.logInfo(_tag, "found", 'External Storage:$externalDirectory');
 
                       File file = File("${externalDirectory!.path}/$value");
 
-                      FlutterLogs.logInfo(
-                          _tag, "path", 'Path: \n${file.path.toString()}');
+                      FlutterLogs.logInfo(_tag, "path", 'Path: \n${file.path.toString()}');
 
                       if (file.existsSync()) {
-                        FlutterLogs.logInfo(_tag, "existsSync",
-                            'Logs found and ready to export!');
+                        FlutterLogs.logInfo(_tag, "existsSync", 'Logs found and ready to export!');
                       } else {
-                        FlutterLogs.logError(
-                            _tag, "existsSync", "File not found in storage.");
+                        FlutterLogs.logError(_tag, "existsSync", "File not found in storage.");
                       }
 
-                      setLogsStatus(
-                          status:
-                              "All logs exported to: \n\nPath: ${file.path.toString()}");
+                      setLogsStatus(status: "All logs exported to: \n\nPath: ${file.path.toString()}");
                     });
                   },
-                  child:
-                      Text('Export All Logs', style: TextStyle(fontSize: 20)),
+                  child: Text('Export All Logs', style: TextStyle(fontSize: 20)),
                 ),
                 ElevatedButton(
                   onPressed: () async {
                     printFileLogs();
                   },
-                  child:
-                      Text('Print File Logs', style: TextStyle(fontSize: 20)),
+                  child: Text('Print File Logs', style: TextStyle(fontSize: 20)),
                 ),
                 ElevatedButton(
                   onPressed: () async {
                     exportFileLogs();
                   },
-                  child:
-                      Text('Export File Logs', style: TextStyle(fontSize: 20)),
+                  child: Text('Export File Logs', style: TextStyle(fontSize: 20)),
                 ),
                 ElevatedButton(
                   onPressed: () async {
@@ -222,15 +203,10 @@ class _MyAppState extends State<MyApp> {
   }
 
   void logData({required bool isException}) {
-    var logMessage =
-        'This is a log message: ${DateTime.now().millisecondsSinceEpoch}';
+    var logMessage = 'This is a log message: ${DateTime.now().millisecondsSinceEpoch}';
 
     if (!isException) {
-      FlutterLogs.logThis(
-          tag: _tag,
-          subTag: 'logData',
-          logMessage: logMessage,
-          level: LogLevel.INFO);
+      FlutterLogs.logThis(tag: _tag, subTag: 'logData', logMessage: logMessage, level: LogLevel.INFO);
     } else {
       try {
         if (toggle) {
@@ -244,20 +220,10 @@ class _MyAppState extends State<MyApp> {
         }
       } catch (e) {
         if (e is Error) {
-          FlutterLogs.logThis(
-              tag: _tag,
-              subTag: 'Caught an error.',
-              logMessage: 'Caught an exception!',
-              error: e,
-              level: LogLevel.ERROR);
+          FlutterLogs.logThis(tag: _tag, subTag: 'Caught an error.', logMessage: 'Caught an exception!', error: e, level: LogLevel.ERROR);
           logMessage = e.stackTrace.toString();
         } else if (e is Exception) {
-          FlutterLogs.logThis(
-              tag: _tag,
-              subTag: 'Caught an exception.',
-              logMessage: 'Caught an exception!',
-              exception: e,
-              level: LogLevel.ERROR);
+          FlutterLogs.logThis(tag: _tag, subTag: 'Caught an exception.', logMessage: 'Caught an exception!', exception: e, level: LogLevel.ERROR);
           logMessage = e.toString();
         }
       }
@@ -266,8 +232,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   void logToFile() {
-    var logMessage =
-        "This is a log message: ${DateTime.now().millisecondsSinceEpoch}, it will be saved to my log file named: \'$_myLogFileName\'";
+    var logMessage = "This is a log message: ${DateTime.now().millisecondsSinceEpoch}, it will be saved to my log file named: \'$_myLogFileName\'";
     FlutterLogs.logToFile(
         logFileName: _myLogFileName,
         overwrite: false,
@@ -278,24 +243,21 @@ class _MyAppState extends State<MyApp> {
   }
 
   void printAllLogs() {
-    FlutterLogs.printLogs(
-        exportType: ExportType.ALL, decryptBeforeExporting: true);
+    FlutterLogs.printLogs(exportType: ExportType.ALL, decryptBeforeExporting: true);
     setLogsStatus(status: "All logs printed");
   }
 
   Future<String> exportAllLogs() async {
-    FlutterLogs.exportLogs(exportType: ExportType.ALL);
+    await FlutterLogs.exportLogs(exportType: ExportType.ALL);
     return _completer.future as FutureOr<String>;
   }
 
   void exportFileLogs() {
-    FlutterLogs.exportFileLogForName(
-        logFileName: _myLogFileName, decryptBeforeExporting: true);
+    FlutterLogs.exportFileLogForName(logFileName: _myLogFileName, decryptBeforeExporting: true);
   }
 
   void printFileLogs() {
-    FlutterLogs.printFileLogForName(
-        logFileName: _myLogFileName, decryptBeforeExporting: true);
+    FlutterLogs.printFileLogForName(logFileName: _myLogFileName, decryptBeforeExporting: true);
   }
 
   void setLogsStatus({String status = '', bool append = false}) {
