@@ -8,17 +8,7 @@ enum LogFileExtension { TXT, CSV, LOG, NONE }
 
 enum LogLevel { INFO, WARNING, ERROR, SEVERE }
 
-enum LogType {
-  Device,
-  Location,
-  Notification,
-  Network,
-  Navigation,
-  History,
-  Tasks,
-  Jobs,
-  Errors
-}
+enum LogType { Device, Location, Notification, Network, Navigation, History, Tasks, Jobs, Errors }
 
 enum TimeStampFormat {
   DATE_FORMAT_1,
@@ -79,11 +69,9 @@ class FlutterLogs {
     var directoryStructureString = _getDirectoryStructure(directoryStructure);
     var timeStampFormatString = _getTimeStampFormat(timeStampFormat);
     var logFileExtensionString = _getLogFileExtension(logFileExtension);
-    var logLevelsEnabledList =
-        logLevelsEnabled?.map((e) => _getLogLevel(e)) ?? <String>[];
+    var logLevelsEnabledList = logLevelsEnabled?.map((e) => _getLogLevel(e)) ?? <String>[];
 
-    final String result =
-        await channel.invokeMethod('initLogs', <String, dynamic>{
+    final String result = await channel.invokeMethod('initLogs', <String, dynamic>{
       'logLevelsEnabled': logLevelsEnabledList.join(','),
       'logTypesEnabled': logTypesEnabled?.join(',') ?? '',
       'logsRetentionPeriodInDays': logsRetentionPeriodInDays,
@@ -138,6 +126,7 @@ class FlutterLogs {
         'initialDelaySecondsForPublishing': initialDelaySecondsForPublishing
       });
     }
+    return null;
   }
 
   static Future<String> setMetaInfo({
@@ -190,174 +179,82 @@ class FlutterLogs {
     });
   }
 
-  static Future<void> logThis(
-      {String tag = "",
-      String subTag = "",
-      String logMessage = "",
-      LogLevel level = LogLevel.INFO,
-      Exception? exception,
-      Error? error,
-      String errorMessage = ""}) async {
+  static Future<void> logThis({String tag = "", String subTag = "", String logMessage = "", LogLevel level = LogLevel.INFO, Exception? exception, Error? error, String errorMessage = ""}) async {
     if (exception != null) {
-      final String result =
-          await channel.invokeMethod('logThis', <String, dynamic>{
-        'tag': tag,
-        'subTag': subTag,
-        'logMessage': "$logMessage , Error: ${error.toString()}",
-        'level': _getLogLevel(level),
-        'e': exception.toString()
-      });
+      final String result = await channel
+          .invokeMethod('logThis', <String, dynamic>{'tag': tag, 'subTag': subTag, 'logMessage': "$logMessage , Error: ${error.toString()}", 'level': _getLogLevel(level), 'e': exception.toString()});
       printDebugMessage(result, 2);
     } else if (error != null) {
-      final String result =
-          await channel.invokeMethod('logThis', <String, dynamic>{
-        'tag': tag,
-        'subTag': subTag,
-        'logMessage': "$logMessage , Error: ${error.toString()}",
-        'level': _getLogLevel(level),
-        'e': error.stackTrace.toString()
-      });
+      final String result = await channel.invokeMethod(
+          'logThis', <String, dynamic>{'tag': tag, 'subTag': subTag, 'logMessage': "$logMessage , Error: ${error.toString()}", 'level': _getLogLevel(level), 'e': error.stackTrace.toString()});
       printDebugMessage(result, 2);
-    } else if (errorMessage != null && errorMessage.isNotEmpty) {
-      final String result =
-          await channel.invokeMethod('logThis', <String, dynamic>{
-        'tag': tag,
-        'subTag': subTag,
-        'logMessage': "$logMessage , Error: $errorMessage",
-        'level': _getLogLevel(level)
-      });
+    } else if (errorMessage.isNotEmpty) {
+      final String result = await channel.invokeMethod('logThis', <String, dynamic>{'tag': tag, 'subTag': subTag, 'logMessage': "$logMessage , Error: $errorMessage", 'level': _getLogLevel(level)});
       printDebugMessage(result, 2);
     } else {
-      final String result =
-          await channel.invokeMethod('logThis', <String, dynamic>{
-        'tag': tag,
-        'subTag': subTag,
-        'logMessage': logMessage,
-        'level': _getLogLevel(level)
-      });
+      final String result = await channel.invokeMethod('logThis', <String, dynamic>{'tag': tag, 'subTag': subTag, 'logMessage': logMessage, 'level': _getLogLevel(level)});
       printDebugMessage(result, 2);
     }
   }
 
-  static Future<void> logInfo(
-      String tag, String subTag, String logMessage) async {
-    final String result =
-        await channel.invokeMethod('logThis', <String, dynamic>{
-      'tag': tag,
-      'subTag': subTag,
-      'logMessage': logMessage,
-      'level': _getLogLevel(LogLevel.INFO)
-    });
+  static Future<void> logInfo(String tag, String subTag, String logMessage) async {
+    final String result = await channel.invokeMethod('logThis', <String, dynamic>{'tag': tag, 'subTag': subTag, 'logMessage': logMessage, 'level': _getLogLevel(LogLevel.INFO)});
     printDebugMessage(result, 2);
   }
 
-  static Future<void> logWarn(
-      String tag, String subTag, String logMessage) async {
-    final String result =
-        await channel.invokeMethod('logThis', <String, dynamic>{
-      'tag': tag,
-      'subTag': subTag,
-      'logMessage': logMessage,
-      'level': _getLogLevel(LogLevel.WARNING)
-    });
+  static Future<void> logWarn(String tag, String subTag, String logMessage) async {
+    final String result = await channel.invokeMethod('logThis', <String, dynamic>{'tag': tag, 'subTag': subTag, 'logMessage': logMessage, 'level': _getLogLevel(LogLevel.WARNING)});
     printDebugMessage(result, 2);
   }
 
-  static Future<void> logError(
-      String tag, String subTag, String logMessage) async {
-    final String result =
-        await channel.invokeMethod('logThis', <String, dynamic>{
-      'tag': tag,
-      'subTag': subTag,
-      'logMessage': logMessage,
-      'level': _getLogLevel(LogLevel.ERROR)
-    });
+  static Future<void> logError(String tag, String subTag, String logMessage) async {
+    final String result = await channel.invokeMethod('logThis', <String, dynamic>{'tag': tag, 'subTag': subTag, 'logMessage': logMessage, 'level': _getLogLevel(LogLevel.ERROR)});
     printDebugMessage(result, 2);
   }
 
-  static Future<void> logErrorTrace(
-      String tag, String subTag, String logMessage, Error e) async {
+  static Future<void> logErrorTrace(String tag, String subTag, String logMessage, Error e) async {
     final String result =
-        await channel.invokeMethod('logThis', <String, dynamic>{
-      'tag': tag,
-      'subTag': subTag,
-      'logMessage': logMessage,
-      'e': e.stackTrace.toString(),
-      'level': _getLogLevel(LogLevel.ERROR)
-    });
+        await channel.invokeMethod('logThis', <String, dynamic>{'tag': tag, 'subTag': subTag, 'logMessage': logMessage, 'e': e.stackTrace.toString(), 'level': _getLogLevel(LogLevel.ERROR)});
     printDebugMessage(result, 2);
   }
 
-  static Future<void> logToFile(
-      {String logFileName = "",
-      bool overwrite = false,
-      String logMessage = "",
-      bool appendTimeStamp = false}) async {
+  static Future<void> logToFile({String logFileName = "", bool overwrite = false, String logMessage = "", bool appendTimeStamp = false}) async {
     if (logFileName.isNotEmpty) {
       final String result =
-          await channel.invokeMethod('logToFile', <String, dynamic>{
-        'logFileName': logFileName,
-        'overwrite': overwrite,
-        'logMessage': logMessage,
-        'appendTimeStamp': appendTimeStamp
-      });
+          await channel.invokeMethod('logToFile', <String, dynamic>{'logFileName': logFileName, 'overwrite': overwrite, 'logMessage': logMessage, 'appendTimeStamp': appendTimeStamp});
       printDebugMessage(result, 2);
     } else {
       print("Error: \'logFileName\' required.");
     }
   }
 
-  static Future<void> exportLogs(
-      {ExportType exportType = ExportType.ALL,
-      bool decryptBeforeExporting = false}) async {
-    final String result =
-        await channel.invokeMethod('exportLogs', <String, dynamic>{
-      'exportType': _getExportType(exportType),
-      'decryptBeforeExporting': decryptBeforeExporting
-    });
+  static Future<void> exportLogs({ExportType exportType = ExportType.ALL, bool decryptBeforeExporting = false}) async {
+    final String result = await channel.invokeMethod('exportLogs', <String, dynamic>{'exportType': _getExportType(exportType), 'decryptBeforeExporting': decryptBeforeExporting});
     printDebugMessage(result, 2);
   }
 
-  static Future<void> printLogs(
-      {ExportType exportType = ExportType.ALL,
-      bool decryptBeforeExporting = false}) async {
-    final String result =
-        await channel.invokeMethod('printLogs', <String, dynamic>{
-      'exportType': _getExportType(exportType),
-      'decryptBeforeExporting': decryptBeforeExporting
-    });
+  static Future<void> printLogs({ExportType exportType = ExportType.ALL, bool decryptBeforeExporting = false}) async {
+    final String result = await channel.invokeMethod('printLogs', <String, dynamic>{'exportType': _getExportType(exportType), 'decryptBeforeExporting': decryptBeforeExporting});
     printDebugMessage(result, 2);
   }
 
-  static Future<void> exportFileLogForName(
-      {String logFileName = "", bool decryptBeforeExporting = false}) async {
+  static Future<void> exportFileLogForName({String logFileName = "", bool decryptBeforeExporting = false}) async {
     if (logFileName.isNotEmpty) {
-      final String result = await channel.invokeMethod(
-          'exportFileLogForName', <String, dynamic>{
-        'logFileName': logFileName,
-        'decryptBeforeExporting': decryptBeforeExporting
-      });
+      final String result = await channel.invokeMethod('exportFileLogForName', <String, dynamic>{'logFileName': logFileName, 'decryptBeforeExporting': decryptBeforeExporting});
       printDebugMessage(result, 2);
     } else {
       print("Error: \'logFileName\' required.");
     }
   }
 
-  static Future<void> exportAllFileLogs(
-      {bool decryptBeforeExporting = false}) async {
-    final String result = await channel.invokeMethod('exportAllFileLogs',
-        <String, dynamic>{'decryptBeforeExporting': decryptBeforeExporting});
+  static Future<void> exportAllFileLogs({bool decryptBeforeExporting = false}) async {
+    final String result = await channel.invokeMethod('exportAllFileLogs', <String, dynamic>{'decryptBeforeExporting': decryptBeforeExporting});
     printDebugMessage(result, 2);
   }
 
-  static Future<void> printFileLogForName(
-      {String logFileName = "", bool decryptBeforeExporting = false}) async {
+  static Future<void> printFileLogForName({String logFileName = "", bool decryptBeforeExporting = false}) async {
     if (logFileName.isNotEmpty) {
-      final String result = await channel.invokeMethod(
-          'printFileLogForName', <String, dynamic>{
-        'logFileName': logFileName,
-        'decryptBeforeExporting': decryptBeforeExporting
-      });
+      final String result = await channel.invokeMethod('printFileLogForName', <String, dynamic>{'logFileName': logFileName, 'decryptBeforeExporting': decryptBeforeExporting});
       printDebugMessage(result, 2);
     } else {
       print("Error: \'logFileName\' required.");
