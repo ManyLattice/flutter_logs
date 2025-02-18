@@ -278,10 +278,6 @@ class FlutterLogs {
     return type.toString().split('.').last;
   }
 
-  static String _getLogType(LogType type) {
-    return type.toString().split('.').last;
-  }
-
   static String _getTimeStampFormat(TimeStampFormat type) {
     return type.toString().split('.').last;
   }
