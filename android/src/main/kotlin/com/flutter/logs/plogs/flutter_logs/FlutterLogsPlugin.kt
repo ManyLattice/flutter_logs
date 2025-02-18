@@ -231,12 +231,15 @@ class FlutterLogsPlugin : FlutterPlugin, ActivityAware {
                                         onNext = {
                                             PLog.logThis(TAG, "exportPLogs", "PLogs Path: ${getParentPath(it)}", LogLevel.INFO)
 
+
                                             channel?.invokeMethod("logsExported", "${getParentPath(it)}")
+                                            result.success(getParentPath(it))
                                         },
                                         onError = {
                                             it.printStackTrace()
                                             PLog.logThis(TAG, "exportPLogs", "PLog Error: " + it.message, LogLevel.ERROR)
                                             channel?.invokeMethod("logsExported", it.message)
+                                            result.error("exportPLogs", "PLog Error: " + it.message , null)
                                         },
                                         onComplete = { }
                                 )
