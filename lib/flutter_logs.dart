@@ -228,36 +228,43 @@ class FlutterLogs {
     }
   }
 
-  static Future<void> exportLogs({ExportType exportType = ExportType.ALL, bool decryptBeforeExporting = false}) async {
+  static Future<String> exportLogs({ExportType exportType = ExportType.ALL, bool decryptBeforeExporting = false}) async {
     final String result = await channel.invokeMethod('exportLogs', <String, dynamic>{'exportType': _getExportType(exportType), 'decryptBeforeExporting': decryptBeforeExporting});
     printDebugMessage(result, 2);
+    return result;
   }
 
-  static Future<void> printLogs({ExportType exportType = ExportType.ALL, bool decryptBeforeExporting = false}) async {
+  static Future<String> printLogs({ExportType exportType = ExportType.ALL, bool decryptBeforeExporting = false}) async {
     final String result = await channel.invokeMethod('printLogs', <String, dynamic>{'exportType': _getExportType(exportType), 'decryptBeforeExporting': decryptBeforeExporting});
     printDebugMessage(result, 2);
+    return result;
   }
 
-  static Future<void> exportFileLogForName({String logFileName = "", bool decryptBeforeExporting = false}) async {
+  static Future<String?> exportFileLogForName({String logFileName = "", bool decryptBeforeExporting = false}) async {
     if (logFileName.isNotEmpty) {
       final String result = await channel.invokeMethod('exportFileLogForName', <String, dynamic>{'logFileName': logFileName, 'decryptBeforeExporting': decryptBeforeExporting});
       printDebugMessage(result, 2);
+      return result;
     } else {
       print("Error: \'logFileName\' required.");
+      return null;
     }
   }
 
-  static Future<void> exportAllFileLogs({bool decryptBeforeExporting = false}) async {
+  static Future<String> exportAllFileLogs({bool decryptBeforeExporting = false}) async {
     final String result = await channel.invokeMethod('exportAllFileLogs', <String, dynamic>{'decryptBeforeExporting': decryptBeforeExporting});
     printDebugMessage(result, 2);
+    return result;
   }
 
-  static Future<void> printFileLogForName({String logFileName = "", bool decryptBeforeExporting = false}) async {
+  static Future<String?> printFileLogForName({String logFileName = "", bool decryptBeforeExporting = false}) async {
     if (logFileName.isNotEmpty) {
       final String result = await channel.invokeMethod('printFileLogForName', <String, dynamic>{'logFileName': logFileName, 'decryptBeforeExporting': decryptBeforeExporting});
       printDebugMessage(result, 2);
+      return result;
     } else {
       print("Error: \'logFileName\' required.");
+      return null;
     }
   }
 
